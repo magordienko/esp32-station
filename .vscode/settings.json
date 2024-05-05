@@ -16,6 +16,8 @@
     "idf.toolsPath": "/home/mikhail/.espressif",
     "idf.flashType": "UART",
     "files.associations": {
-        "sdkconfig.h": "c"
+        "sdkconfig.h": "c",
+        "freertos.h": "c",
+        "esp_flash.h": "c"
     }
 }

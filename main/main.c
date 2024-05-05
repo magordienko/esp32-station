@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <inttypes.h>
-
+/* Подключаемые библиотеки */
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "freertos/FreeRTOS.h"
@@ -8,36 +6,34 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 
-#define GPIO_2 2
+/* Используемые макросы */
 #define GPIO_4 4
+#define GPIO_LED GPIO_4
 
-/* */
-static void behavior_gpio(void)
-{
-    static uint8_t s_led_state = 0;
+/* Объявление функций */
+static void gpio_init(void);
+static void gpio_switch(gpio_num_t gpio_num);
 
-    s_led_state = !s_led_state;
-
-    gpio_set_level(GPIO_2, s_led_state);
-    gpio_set_level(GPIO_4, !s_led_state);
-}
-
-/* */
-static void configure_gpio(void)
-{
-    gpio_reset_pin(GPIO_2);
-    gpio_reset_pin(GPIO_4);
-
-    gpio_set_direction(GPIO_2, GPIO_MODE_OUTPUT);
-    gpio_set_direction(GPIO_4, GPIO_MODE_OUTPUT);
-}
-
+/* Точка входа программы */
 void app_main(void)
 {
-    configure_gpio();
+    gpio_init();
     while (1)
     {
-        behavior_gpio();
+        gpio_switch(GPIO_LED);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+}
+
+/* Функция инициализации GPIO */
+static void gpio_init(void)
+{
+    gpio_reset_pin(GPIO_LED);
+    gpio_set_direction(GPIO_LED, GPIO_MODE_INPUT_OUTPUT);
+}
+
+/* Функция переключения состояния GPIO */
+static void gpio_switch(gpio_num_t gpio_num)
+{
+    gpio_set_level(gpio_num, !gpio_get_level(gpio_num));
 }
