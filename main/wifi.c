@@ -1,13 +1,16 @@
 #include "wifi.h"
-//-------------------------------------------------------------
+
+/* Используемые макросы */
+#define WIFI_CONNECTED_BIT BIT0
+#define WIFI_FAIL_BIT BIT1
+#define STA_SSID "DIR-615-935"
+#define STA_PASSWORD "01230406"
+
 static const char *TAG = "wifi";
 static int s_retry_num = 0;
 static EventGroupHandle_t s_wifi_event_group;
-#define WIFI_CONNECTED_BIT BIT0
-#define WIFI_FAIL_BIT BIT1
-//-------------------------------------------------------------
-static void event_handler(void *arg, esp_event_base_t event_base,
-                          int32_t event_id, void *event_data)
+
+void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
     {
@@ -33,7 +36,6 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-        gpio_set_level(4, 1);
     }
 }
 //-------------------------------------------------------------
@@ -61,8 +63,8 @@ void wifi_init_sta(void)
                                                         &instance_got_ip));
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = "DIR-615-935",
-            .password = "01230406",
+            .ssid = STA_SSID,
+            .password = STA_PASSWORD,
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
             .pmf_cfg = {
                 .capable = true,
@@ -86,12 +88,12 @@ void wifi_init_sta(void)
     if (bits & WIFI_CONNECTED_BIT)
     {
         ESP_LOGI(TAG, "connected to ap SSID:%s",
-                 "DIR-615-935");
+                 STA_SSID);
     }
     else if (bits & WIFI_FAIL_BIT)
     {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s",
-                 "DIR-615-935");
+                 STA_SSID);
     }
     else
     {
