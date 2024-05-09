@@ -12,6 +12,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
+#include "esp_spiffs.h"
+#include "spiffs_config.h"
 #include "sdkconfig.h"
 
 #include "gpio.h"

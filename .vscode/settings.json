@@ -26,6 +26,7 @@
         "gpio.h": "c",
         "string.h": "c",
         "timer.h": "c",
-        "cstring": "c"
+        "cstring": "c",
+        "spiffs_config.h": "c"
     }
 }
