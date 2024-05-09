@@ -25,6 +25,7 @@
         "nvs_flash.h": "c",
         "gpio.h": "c",
         "string.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "cstring": "c"
     }
 }

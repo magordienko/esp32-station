@@ -14,7 +14,6 @@ void app_main(void)
     gpio_init();
     timer_init(500000);
 
-    wifi_ap_record_t info;
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
@@ -24,21 +23,13 @@ void app_main(void)
         ESP_LOGI(TAG, "nvs_flash_init: 0x%04x", ret);
     }
     ESP_LOGI(TAG, "nvs_flash_init: 0x%04x", ret);
-    wifi_init_sta();
-
-    while (1)
-    {
-        ESP_LOGI(TAG, "Heap free size:%d", xPortGetFreeHeapSize());
-        ret = esp_wifi_sta_get_ap_info(&info);
-        ESP_LOGI(TAG, "esp_wifi_sta_get_ap_info: 0x%04x", ret);
-        if (ret == 0)
-            ESP_LOGI(TAG, "SSID: %s", info.ssid);
-        else
-        {
-            wifi_init_sta();
-        }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    ret = esp_netif_init();
+    ESP_LOGI(TAG, "esp_netif_init: %d", ret);
+    ret = esp_event_loop_create_default();
+    ESP_LOGI(TAG, "esp_event_loop_create_default: %d", ret);
+    ret = wifi_init_sta();
+    ESP_LOGI(TAG, "wifi_init_sta: %d", ret);
+    xTaskCreate(http_task, "http_task", 4096, NULL, 5, NULL);
 }
 
 /* Функция инициализации GPIO */

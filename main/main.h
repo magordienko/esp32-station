@@ -17,6 +17,7 @@
 #include "gpio.h"
 #include "timer.h"
 #include "wifi.h"
+#include "http.h"
 
 /* Объявление функций */
 static void gpio_init(void);
