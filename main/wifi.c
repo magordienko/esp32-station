@@ -3,6 +3,7 @@
 /* Используемые макросы */
 #define STA_SSID "DIR-615-935"
 #define STA_PASSWORD "01230406"
+#define CONFIG_LED_GPIO 4
 
 #define WIFI_SCAN_METHOD WIFI_ALL_CHANNEL_SCAN
 #define WIFI_CONNECT_AP_SORT_METHOD WIFI_CONNECT_AP_BY_SIGNAL
@@ -14,7 +15,7 @@ static esp_ip4_addr_t s_ip_addr;
 static QueueHandle_t s_semph_get_ip_addrs;
 static esp_netif_t *s_esp_netif = NULL;
 static int s_active_interfaces = 0;
-
+//-------------------------------------------------------------
 static bool is_our_netif(const char *prefix, esp_netif_t *netif)
 {
     return strncmp(prefix, esp_netif_get_desc(netif), strlen(prefix) - 1) == 0;
@@ -23,6 +24,7 @@ static bool is_our_netif(const char *prefix, esp_netif_t *netif)
 static void on_wifi_disconnect(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)
 {
+    gpio_set_level(CONFIG_LED_GPIO, 0);
     httpd_handle_t *server = (httpd_handle_t *)arg;
     if (*server)
     {
@@ -50,6 +52,7 @@ static void on_got_ip(void *arg, esp_event_base_t event_base,
     }
     ESP_LOGI(TAG, "Got IPv4 event: Interface \"%s\" address: " IPSTR, esp_netif_get_desc(event->esp_netif), IP2STR(&event->ip_info.ip));
     memcpy(&s_ip_addr, &event->ip_info.ip, sizeof(s_ip_addr));
+    gpio_set_level(CONFIG_LED_GPIO, 1);
     httpd_handle_t *server = (httpd_handle_t *)arg;
     if (*server == NULL)
     {
@@ -170,6 +173,7 @@ esp_err_t wifi_init_sta(void)
     {
         xSemaphoreTake(s_semph_get_ip_addrs, portMAX_DELAY);
     }
+    gpio_set_level(CONFIG_LED_GPIO, 1);
     esp_netif_t *netif = NULL;
     esp_netif_ip_info_t ip;
     for (int i = 0; i < esp_netif_get_nr_of_ifs(); ++i)
