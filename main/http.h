@@ -11,6 +11,7 @@
 #include <sys/param.h>
 #include <esp_http_server.h>
 #include "esp_vfs.h"
+#include "driver/gpio.h"
 
 #include "lwip/err.h"
 #include "lwip/sockets.h"

@@ -1,5 +1,7 @@
 #include "http.h"
 
+#define CONFIG_LED_GPIO 4
+
 /* Используемые макросы */
 #define SERVER_PORT 80
 #define IS_FILE_EXT(filename, ext) (strcasecmp(&filename[strlen(filename) - sizeof(ext) + 1], ext) == 0)
@@ -53,6 +55,8 @@ static esp_err_t download_get_handler(httpd_req_t *req)
 {
     char filepath[FILE_PATH_MAX];
     FILE *fd = NULL;
+    char *buf;
+    size_t buf_len;
     struct stat file_stat;
 
     const char *filename = get_path_from_uri(filepath, ((struct file_server_data *)req->user_ctx)->base_path,
@@ -78,6 +82,46 @@ static esp_err_t download_get_handler(httpd_req_t *req)
     }
     ESP_LOGI(TAG, "Sending file : %s (%ld bytes)...", filename, file_stat.st_size);
     set_content_type_from_file(req, filename);
+
+    buf_len = httpd_req_get_url_query_len(req) + 1;
+    printf("buf_len: %d\n", buf_len);
+
+    if (buf_len > 1)
+    {
+        buf = malloc(buf_len);
+
+        if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK)
+        {
+            ESP_LOGI(TAG, "Found URL query => %s", buf);
+            char param[32];
+            if (httpd_query_key_value(buf, "red", param, sizeof(param)) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Found URL query parameter => red:%s", param);
+                if (!strcmp(param, "RED+ON"))
+                    gpio_set_level(CONFIG_LED_GPIO, 0);
+                else if (!strcmp(param, "RED+OFF"))
+                    gpio_set_level(CONFIG_LED_GPIO, 1);
+            }
+            if (httpd_query_key_value(buf, "green", param, sizeof(param)) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Found URL query parameter => green:%s", param);
+                if (!strcmp(param, "GREEN+ON"))
+                    gpio_set_level(CONFIG_LED_GPIO, 0);
+                else if (!strcmp(param, "GREEN+OFF"))
+                    gpio_set_level(CONFIG_LED_GPIO, 1);
+            }
+            if (httpd_query_key_value(buf, "blue", param, sizeof(param)) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Found URL query parameter => blue:%s", param);
+                if (!strcmp(param, "BLUE+ON"))
+                    gpio_set_level(CONFIG_LED_GPIO, 0);
+                else if (!strcmp(param, "BLUE+OFF"))
+                    gpio_set_level(CONFIG_LED_GPIO, 1);
+            }
+        }
+        free(buf);
+    }
+
     char *chunk = ((struct file_server_data *)req->user_ctx)->scratch;
     size_t chunksize;
     do
@@ -98,6 +142,82 @@ static esp_err_t download_get_handler(httpd_req_t *req)
     fclose(fd);
     ESP_LOGI(TAG, "File sending complete");
     httpd_resp_send_chunk(req, NULL, 0);
+    return ESP_OK;
+}
+
+static esp_err_t download_post_handler(httpd_req_t *req)
+{
+    char *resp_str = NULL;
+    char *buf;
+    size_t buf_len;
+
+    buf_len = httpd_req_get_url_query_len(req) + 1;
+    printf("buf_len: %d\n", buf_len);
+
+    if (buf_len > 1)
+    {
+        buf = malloc(buf_len);
+
+        if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK)
+        {
+            ESP_LOGI(TAG, "Found URL query => %s", buf);
+            char param[32];
+            if (httpd_query_key_value(buf, "red", param, sizeof(param)) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Found URL query parameter => red:%s", param);
+                if (!strcmp(param, "1"))
+                    gpio_set_level(CONFIG_LED_GPIO, 0);
+                else if (!strcmp(param, "0"))
+                    gpio_set_level(CONFIG_LED_GPIO, 1);
+            }
+
+            else if (httpd_query_key_value(buf, "green", param, sizeof(param)) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Found URL query parameter => green:%s", param);
+                if (!strcmp(param, "1"))
+                    gpio_set_level(CONFIG_LED_GPIO, 0);
+                else if (!strcmp(param, "0"))
+                    gpio_set_level(CONFIG_LED_GPIO, 1);
+            }
+
+            else if (httpd_query_key_value(buf, "blue", param, sizeof(param)) == ESP_OK)
+            {
+                ESP_LOGI(TAG, "Found URL query parameter => blue:%s", param);
+                if (!strcmp(param, "1"))
+                    gpio_set_level(CONFIG_LED_GPIO, 0);
+                else if (!strcmp(param, "0"))
+                    gpio_set_level(CONFIG_LED_GPIO, 1);
+            }
+
+            resp_str = (char *)req->user_ctx;
+            resp_str = malloc(200);
+
+            strcpy(resp_str, "<table>\
+        <tr><th>RED</th><th>GREEN</th><th>BLUE</th></tr>\
+        <tr><td>");
+            if (gpio_get_level(CONFIG_LED_GPIO))
+                strcat(resp_str, "OFF");
+            else
+                strcat(resp_str, "ON");
+            strcat(resp_str, "</td><td>");
+            if (gpio_get_level(CONFIG_LED_GPIO))
+                strcat(resp_str, "OFF");
+            else
+                strcat(resp_str, "ON");
+            strcat(resp_str, "</td><td>");
+            if (gpio_get_level(CONFIG_LED_GPIO))
+                strcat(resp_str, "OFF");
+            else
+                strcat(resp_str, "ON");
+            strcat(resp_str, "</td></tr></table>");
+
+            httpd_resp_send(req, resp_str, strlen(resp_str));
+
+            free(resp_str);
+        }
+        free(buf);
+    }
+
     return ESP_OK;
 }
 //-------------------------------------------------------------
@@ -143,7 +263,14 @@ httpd_handle_t start_webserver(void)
         .user_ctx = server_data // Pass server data as context
     };
 
+    httpd_uri_t file_download_post = {
+        .uri = "/*",
+        .method = HTTP_POST,
+        .handler = download_post_handler,
+        .user_ctx = NULL};
+
     httpd_register_uri_handler(server, &file_download);
+    httpd_register_uri_handler(server, &file_download_post);
     return server;
 }
 //-------------------------------------------------------------

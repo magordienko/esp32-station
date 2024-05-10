@@ -1,12 +1,131 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>ESP32</title>
+	<title>ESP32 File Server</title>
+	<script>
+		var xhr;
+		var idTimer1;
+		function onload() {
+			xhr = new (XMLHttpRequest);
+			xhr.open("POST", "color.html?start=0", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+			idTimer1 = setInterval("Timer1()", 1000);
+		}
+		function Timer1() {
+			xhr.open("POST", "color.html?start=0", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+		function red_on() {
+			xhr.open("POST", "color.html?red=1", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+		function red_off() {
+			xhr.open("POST", "color.html?red=0", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+		function green_on() {
+			xhr.open("POST", "color.html?green=1", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+		function green_off() {
+			xhr.open("POST", "color.html?green=0", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+		function blue_on() {
+			xhr.open("POST", "color.html?blue=1", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+		function blue_off() {
+			xhr.open("POST", "color.html?blue=0", true);
+			xhr.responseType = "text";
+			xhr.onload = function (oEvent) {
+				document.getElementById('info_table').innerHTML = xhr.response;
+			}
+			xhr.send(null);
+		}
+	</script>
+	<style>
+		.button1 {
+			width: 150px;
+			height: 48px;
+			font-size: 17px;
+		}
+
+		.button1:hover {
+			border: 1px solid rgb(198, 198, 198);
+		}
+
+		.button1:active {
+			background: linear-gradient(#f59500, #f5ae00) #f59500;
+		}
+
+		table {
+			border: 1px solid grey;
+		}
+
+		th {
+			border: 1px solid grey;
+		}
+
+		td {
+			border: 1px solid grey;
+			text-align: center;
+		}
+	</style>
 </head>
-<body>
-	<h1 style="text-align: center;">Esp 32<br><br>HTTP Server</h1>
-	<p><span style="font-family: Times New Roman,Times,serif;">ESP32 is a single 2.4 GHz Wi-Fi-and-Bluetooth combo chip designed with the TSMC ultra-low-power 40 nm
-technology.</span> </p>
+
+<body onload="onload()">
+	<font size="5">
+		<div id="info_table"></div>
+	</font>
+	<br />
+	<div>
+		<input class="button1" style="color: #00ffff; background-color: #800000;" type="button" onclick="red_off()"
+			value="RED OFF" />
+		<input class="button1" style="color: #00ffff; background-color: #ff0000;" type="button" onclick="red_on()"
+			value="RED ON" />
+		<br /><br />
+		<input class="button1" style="color: #ff00ff; background-color: #008000;" type="button" onclick="green_off()"
+			value="GREEN OFF" />
+		<input class="button1" style="color: #ff00ff; background-color: #00ff00;" type="button" onclick="green_on()"
+			value="GREEN ON" />
+		<br /><br />
+		<input class="button1" style="color: #ffff00; background-color: #000080;" type="button" onclick="blue_off()"
+			value="BLUE OFF" />
+		<input class="button1" style="color: #ffff00; background-color: #0000ff;" type="button" onclick="blue_on()"
+			value="BLUE ON" />
+	</div>
+	<br /><br />
 </body>
+
 </html>
