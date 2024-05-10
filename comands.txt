@@ -1,0 +1,11 @@
+idf.py build flash
+
+esptool.py erase_flash
+
+esptool.py -b 921600 read_flash 0x110000 0xF0000 esp32spiffs/output/flash_contents.bin
+
+esptool.py -b 921600 write_flash -z 0x110000 esp32spiffs/flash_input/flash_contents.bin
+
+./esp32spiffs/mkspiffs -u esp32spiffs/output esp32spiffs/output/flash_contents.bin
+
+./esp32spiffs/mkspiffs -c esp32spiffs/input -b 4096 -p 256 -s 0xF0000 esp32spiffs/flash_input/flash_contents.bin

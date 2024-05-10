@@ -48,17 +48,21 @@ void app_main(void)
     {
         ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
     }
-    FILE *f;
+
     ESP_LOGI(TAG, "Opening file");
-    f = fopen("/spiffs/hello.txt", "w");
+    FILE *f = fopen("/spiffs/index.html", "rb");
     if (f == NULL)
     {
-        ESP_LOGE(TAG, "Failed to open file for writing");
+        ESP_LOGE(TAG, "Failed to open file for reading");
         return;
     }
-    fprintf(f, "Hello Blat nahui\n");
+    char str1[500];
+    size_t n;
+    n = fread(str1, 1, sizeof(str1), f);
     fclose(f);
-    ESP_LOGI(TAG, "File written");
+    str1[n] = 0;
+
+    ESP_LOGI(TAG, "Read from file:\r\n%s", str1);
 
     while (1)
     {
