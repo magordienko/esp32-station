@@ -14,14 +14,23 @@ void app_main(void)
     gpio_init();
     timer_init(500000);
 
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
+        ret = nvs_flash_erase();
+        ESP_LOGI(TAG, "nvs_flash_erase: 0x%04x", ret);
+        ret = nvs_flash_init();
+        ESP_LOGI(TAG, "nvs_flash_init: 0x%04x", ret);
+    }
+    ESP_LOGI(TAG, "nvs_flash_init: 0x%04x", ret);
+
     ESP_LOGI(TAG, "Initializing SPIFFS");
     esp_vfs_spiffs_conf_t conf = {
         .base_path = "/spiffs",
         .partition_label = NULL,
         .max_files = 5,
         .format_if_mount_failed = true};
-
-    esp_err_t ret = esp_vfs_spiffs_register(&conf);
+    ret = esp_vfs_spiffs_register(&conf);
     if (ret != ESP_OK)
     {
         if (ret == ESP_FAIL)
@@ -49,24 +58,12 @@ void app_main(void)
         ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
     }
 
-    ESP_LOGI(TAG, "Opening file");
-    FILE *f = fopen("/spiffs/index.html", "rb");
-    if (f == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to open file for reading");
-        return;
-    }
-    char str1[500];
-    size_t n;
-    n = fread(str1, 1, sizeof(str1), f);
-    fclose(f);
-    str1[n] = 0;
-
-    ESP_LOGI(TAG, "Read from file:\r\n%s", str1);
-
-    while (1)
-    {
-    }
+    ret = esp_netif_init();
+    ESP_LOGI(TAG, "esp_netif_init: %d", ret);
+    ret = esp_event_loop_create_default();
+    ESP_LOGI(TAG, "esp_event_loop_create_default: %d", ret);
+    ret = wifi_init_sta();
+    ESP_LOGI(TAG, "wifi_init_sta: %d", ret);
 }
 
 /* Функция инициализации GPIO */

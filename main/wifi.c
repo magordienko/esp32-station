@@ -23,6 +23,13 @@ static bool is_our_netif(const char *prefix, esp_netif_t *netif)
 static void on_wifi_disconnect(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)
 {
+    httpd_handle_t *server = (httpd_handle_t *)arg;
+    if (*server)
+    {
+        ESP_LOGI(TAG, "Stopping webserver");
+        stop_webserver(*server);
+        *server = NULL;
+    }
     ESP_LOGI(TAG, "Wi-Fi disconnected, trying to reconnect...");
     esp_err_t err = esp_wifi_connect();
     if (err == ESP_ERR_WIFI_NOT_STARTED)
@@ -43,12 +50,19 @@ static void on_got_ip(void *arg, esp_event_base_t event_base,
     }
     ESP_LOGI(TAG, "Got IPv4 event: Interface \"%s\" address: " IPSTR, esp_netif_get_desc(event->esp_netif), IP2STR(&event->ip_info.ip));
     memcpy(&s_ip_addr, &event->ip_info.ip, sizeof(s_ip_addr));
+    httpd_handle_t *server = (httpd_handle_t *)arg;
+    if (*server == NULL)
+    {
+        ESP_LOGI(TAG, "Starting webserver");
+        *server = start_webserver();
+    }
     xSemaphoreGive(s_semph_get_ip_addrs);
 }
 //-------------------------------------------------------------
 static esp_netif_t *wifi_start(void)
 {
     esp_err_t ret;
+    static httpd_handle_t server = NULL;
     char *desc;
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ret = esp_wifi_init(&cfg);
@@ -60,9 +74,9 @@ static esp_netif_t *wifi_start(void)
     esp_netif_t *netif = esp_netif_create_wifi(WIFI_IF_STA, &esp_netif_config);
     free(desc);
     esp_wifi_set_default_wifi_sta_handlers();
-    ret = esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &on_wifi_disconnect, NULL);
+    ret = esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &on_wifi_disconnect, &server);
     ESP_LOGI(TAG, "esp_event_handler_register(WIFI_EVENT) : %d", ret);
-    ret = esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &on_got_ip, NULL);
+    ret = esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &on_got_ip, &server);
     ESP_LOGI(TAG, "esp_event_handler_register(IP_EVENT) : %d", ret);
     ret = esp_wifi_set_storage(WIFI_STORAGE_RAM);
     ESP_LOGI(TAG, "esp_wifi_set_storage : %d", ret);
