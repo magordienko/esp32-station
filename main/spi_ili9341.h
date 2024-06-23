@@ -9,6 +9,7 @@
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
 #include "sdkconfig.h"
+#include "fonts.h"
 //---------------------------------------------------------------------
 #define PIN_NUM_CLK 18
 #define PIN_NUM_MOSI 23
@@ -49,6 +50,7 @@ void TFT9341_DrawRect(spi_device_handle_t spi, uint16_t color, uint16_t x1, uint
 void TFT9341_DrawCircle(spi_device_handle_t spi, uint16_t x0, uint16_t y0, int r, uint16_t color);
 void TFT9341_SetTextColor(uint16_t color);
 void TFT9341_SetBackColor(uint16_t color);
+void TFT9341_SetFont(sFONT *pFonts);
 void TFT9341_DrawChar(spi_device_handle_t spi, uint16_t x, uint16_t y, uint8_t c);
 void TFT9341_String(spi_device_handle_t spi, uint16_t x, uint16_t y, char *str);
 void TFT9341_SetRotation(spi_device_handle_t spi, uint8_t r);

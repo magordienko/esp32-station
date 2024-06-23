@@ -3,6 +3,14 @@
 uint16_t TFT9341_WIDTH;
 uint16_t TFT9341_HEIGHT;
 //-------------------------------------------------------------------
+typedef struct
+{
+    uint16_t TextColor;
+    uint16_t BackColor;
+    sFONT *pFont;
+} LCD_DrawPropTypeDef;
+LCD_DrawPropTypeDef lcdprop;
+//-------------------------------------------------------------------
 void lcd_cmd(spi_device_handle_t spi, const uint8_t cmd)
 {
     esp_err_t ret;
@@ -338,6 +346,74 @@ void TFT9341_DrawCircle(spi_device_handle_t spi, uint16_t x0, uint16_t y0, int r
         TFT9341_DrawPixel(spi, x0 - y, y0 + x, color);
         TFT9341_DrawPixel(spi, x0 + y, y0 - x, color);
         TFT9341_DrawPixel(spi, x0 - y, y0 - x, color);
+    }
+}
+//-------------------------------------------------------------------
+void TFT9341_SetTextColor(uint16_t color)
+{
+    lcdprop.TextColor = color;
+}
+//-------------------------------------------------------------------
+void TFT9341_SetBackColor(uint16_t color)
+{
+    lcdprop.BackColor = color;
+}
+//-------------------------------------------------------------------
+void TFT9341_SetFont(sFONT *pFonts)
+{
+    lcdprop.pFont = pFonts;
+}
+//-------------------------------------------------------------------
+void TFT9341_DrawChar(spi_device_handle_t spi, uint16_t x, uint16_t y, uint8_t c)
+{
+    uint32_t i = 0, j = 0;
+    uint16_t height, width;
+    uint8_t offset;
+    uint8_t *c_t;
+    uint8_t *pchar;
+    uint32_t line = 0;
+    height = lcdprop.pFont->Height;
+    width = lcdprop.pFont->Width;
+    offset = 8 * ((width + 7) / 8) - width;
+    c_t = (uint8_t *)&(lcdprop.pFont->table[(c - ' ') * lcdprop.pFont->Height * ((lcdprop.pFont->Width + 7) / 8)]);
+    for (i = 0; i < height; i++)
+    {
+        pchar = ((uint8_t *)c_t + (width + 7) / 8 * i);
+        switch (((width + 7) / 8))
+        {
+        case 1:
+            line = pchar[0];
+            break;
+        case 2:
+            line = (pchar[0] << 8) | pchar[1];
+            break;
+        case 3:
+        default:
+            line = (pchar[0] << 16) | (pchar[1] << 8) | pchar[2];
+            break;
+        }
+        for (j = 0; j < width; j++)
+        {
+            if (line & (1 << (width - j + offset - 1)))
+            {
+                TFT9341_DrawPixel(spi, (x + j), y, lcdprop.TextColor);
+            }
+            else
+            {
+                TFT9341_DrawPixel(spi, (x + j), y, lcdprop.BackColor);
+            }
+        }
+        y++;
+    }
+}
+//-------------------------------------------------------------------
+void TFT9341_String(spi_device_handle_t spi, uint16_t x, uint16_t y, char *str)
+{
+    while (*str)
+    {
+        TFT9341_DrawChar(spi, x, y, str[0]);
+        x += lcdprop.pFont->Width;
+        (void)*str++;
     }
 }
 //-------------------------------------------------------------------
