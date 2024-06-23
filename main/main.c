@@ -1,81 +1,47 @@
 #include "main.h"
-
+//------------------------------------------------
 static const char *TAG = "main";
-
+//------------------------------------------------
+void lcd_spi_pre_transfer_callback(spi_transaction_t *t)
+{
+    int dc = (int)t->user;
+    gpio_set_level(PIN_NUM_DC, dc);
+}
+//------------------------------------------------
 void app_main(void)
 {
-    gpio_init();
-    nvs_init();
-    nvs_spiffs();
-    app_netif_init();
-    event_loop_create();
-    wifi_sta_init();
-}
-
-/* Функция инициализации NVS */
-void nvs_init(void)
-{
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    uint16_t i, j;
+    esp_err_t ret;
+    spi_device_handle_t spi;
+    // Configure SPI bus
+    spi_bus_config_t cfg = {
+        .mosi_io_num = PIN_NUM_MOSI,
+        .miso_io_num = -1,
+        .sclk_io_num = PIN_NUM_CLK,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        .max_transfer_sz = 16 * 320 * 2 + 8,
+    };
+    ret = spi_bus_initialize(HSPI_HOST, &cfg, SPI_DMA_CH_AUTO);
+    ESP_LOGI(TAG, "spi bus initialize: %d", ret);
+    spi_device_interface_config_t devcfg = {
+        .clock_speed_hz = 32000000,              // Clock out at 10 MHz
+        .mode = 0,                               // SPI mode 0
+        .spics_io_num = PIN_NUM_CS,              // CS pin
+        .queue_size = 7,                         // We want to be able to queue 7 transactions at a time
+        .pre_cb = lcd_spi_pre_transfer_callback, // Specify pre-transfer callback to handle D/C line
+    };
+    ret = spi_bus_add_device(HSPI_HOST, &devcfg, &spi);
+    ESP_LOGI(TAG, "spi bus add device: %d", ret);
+    TFT9341_ini(spi, 320, 240);
+    TFT9341_FillScreen(spi, TFT9341_WHITE);
+    while (1)
     {
-        ret = nvs_flash_erase();
-        ESP_LOGI(TAG, "nvs_flash_erase: 0x%04x", ret);
-        ret = nvs_flash_init();
-        ESP_LOGI(TAG, "nvs_flash_init: 0x%04x", ret);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        TFT9341_FillScreen(spi, TFT9341_BLACK);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        TFT9341_FillScreen(spi, TFT9341_RED);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        TFT9341_FillScreen(spi, TFT9341_BLUE);
     }
-    ESP_LOGI(TAG, "nvs_flash_init: 0x%04x", ret);
-}
-
-/* Функция инициализации SPIFFS */
-void nvs_spiffs(void)
-{
-    ESP_LOGI(TAG, "Initializing SPIFFS");
-
-    esp_vfs_spiffs_conf_t conf = {
-        .base_path = "/spiffs",
-        .partition_label = NULL,
-        .max_files = 5,
-        .format_if_mount_failed = true};
-
-    esp_err_t ret = esp_vfs_spiffs_register(&conf);
-
-    if (ret != ESP_OK)
-    {
-        if (ret == ESP_FAIL)
-        {
-            ESP_LOGE(TAG, "Failed to mount or format filesystem");
-        }
-        else if (ret == ESP_ERR_NOT_FOUND)
-        {
-            ESP_LOGE(TAG, "Failed to find SPIFFS partition");
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
-        }
-        return;
-    }
-
-    size_t total = 0, used = 0;
-    ret = esp_spiffs_info(conf.partition_label, &total, &used);
-    if (ret != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
-    }
-    else
-    {
-        ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
-    }
-}
-
-void app_netif_init(void)
-{
-    esp_err_t ret = esp_netif_init();
-    ESP_LOGI(TAG, "esp_netif_init: %d", ret);
-}
-
-void event_loop_create(void)
-{
-    esp_err_t ret = esp_event_loop_create_default();
-    ESP_LOGI(TAG, "esp_event_loop_create_default: %d", ret);
 }

@@ -1,2 +1,2 @@
-idf_component_register(SRCS "http.c" "timer.c" "gpio.c" "wifi.c" "main.c"
+idf_component_register(SRCS "main.c" "spi_ili9341.c"
                     INCLUDE_DIRS ".")

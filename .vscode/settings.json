@@ -27,6 +27,10 @@
         "string.h": "c",
         "timer.h": "c",
         "cstring": "c",
-        "spiffs_config.h": "c"
+        "spiffs_config.h": "c",
+        "spi_master.h": "c",
+        "spi_ili9341.h": "c",
+        "main.h": "c",
+        "task.h": "c"
     }
 }
