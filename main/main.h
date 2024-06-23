@@ -13,4 +13,6 @@
 
 #include "spi_ili9341.h"
 
+#define num_row(i) i * 12
+
 #endif

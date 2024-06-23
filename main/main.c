@@ -13,7 +13,6 @@ void lcd_spi_pre_transfer_callback(spi_transaction_t *t)
 //------------------------------------------------
 void app_main(void)
 {
-    uint16_t i, j;
     esp_err_t ret;
     spi_device_handle_t spi;
     // Configure SPI bus
@@ -38,115 +37,33 @@ void app_main(void)
     ESP_LOGI(TAG, "spi bus add device: %d", ret);
     TFT9341_ini(spi, 320, 240);
     TFT9341_FillScreen(spi, TFT9341_WHITE);
+    TFT9341_FillScreen(spi, TFT9341_BLACK);
     while (1)
     {
-        /*
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        TFT9341_FillScreen(spi, TFT9341_BLACK);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        TFT9341_FillScreen(spi, TFT9341_RED);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        TFT9341_FillScreen(spi, TFT9341_BLUE);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        for (i = 0; i < 20; i++)
-        {
-            TFT9341_FillRect(spi, 0, 0, TFT9341_WIDTH / 2 - 1, TFT9341_HEIGHT / 2 - 1, rand() & 0x0000FFFF);
-            TFT9341_FillRect(spi, TFT9341_WIDTH / 2, 0, TFT9341_WIDTH - 1, TFT9341_HEIGHT / 2 - 1, rand() & 0x0000FFFF);
-            TFT9341_FillRect(spi, 0, TFT9341_HEIGHT / 2, TFT9341_WIDTH / 2 - 1, TFT9341_HEIGHT - 1, rand() & 0x0000FFFF);
-            TFT9341_FillRect(spi, TFT9341_WIDTH / 2, TFT9341_HEIGHT / 2, TFT9341_WIDTH - 1, TFT9341_HEIGHT - 1, rand() & 0x0000FFFF);
-            vTaskDelay(100 / portTICK_PERIOD_MS);
-        }
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        TFT9341_FillScreen(spi, TFT9341_BLACK);
-
-        for (i = 0; i < 300; i++)
-        {
-            TFT9341_FillRect(spi, rand() % TFT9341_WIDTH,
-                             rand() % TFT9341_HEIGHT,
-                             rand() % TFT9341_WIDTH,
-                             rand() % TFT9341_HEIGHT,
-                             rand() & 0x0000FFFF);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-        }
-
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        TFT9341_FillScreen(spi, TFT9341_BLACK);
-        while (1)
-        {
-            for (j = 0; j < 500; j++)
-            {
-                TFT9341_DrawPixel(spi, rand() % TFT9341_WIDTH,
-                                  rand() % TFT9341_HEIGHT,
-                                  TFT9341_BLACK);
-            }
-            TFT9341_DrawPixel(spi, rand() % TFT9341_WIDTH,
-                              rand() % TFT9341_HEIGHT,
-                              TFT9341_WHITE);
-            usleep(50);
-        }
-        */
-        TFT9341_FillScreen(spi, TFT9341_BLACK);
-        TFT9341_SetTextColor(TFT9341_YELLOW);
-        TFT9341_SetBackColor(TFT9341_BLUE);
-        TFT9341_SetFont(&Font24);
-        TFT9341_DrawChar(spi, 10, 10, 'E');
-        TFT9341_DrawChar(spi, 27, 10, 's');
-        TFT9341_DrawChar(spi, 44, 10, 'p');
-        TFT9341_DrawChar(spi, 61, 10, '3');
-        TFT9341_DrawChar(spi, 78, 10, '2');
+        // TFT9341_FillScreen(spi, TFT9341_BLACK);
+        TFT9341_SetRotation(spi, 3);
         TFT9341_SetTextColor(TFT9341_GREEN);
-        TFT9341_SetBackColor(TFT9341_RED);
-        TFT9341_SetFont(&Font20);
-        TFT9341_DrawChar(spi, 10, 34, 'E');
-        TFT9341_DrawChar(spi, 24, 34, 's');
-        TFT9341_DrawChar(spi, 38, 34, 'p');
-        TFT9341_DrawChar(spi, 52, 34, '3');
-        TFT9341_DrawChar(spi, 66, 34, '2');
-        TFT9341_SetTextColor(TFT9341_BLUE);
-        TFT9341_SetBackColor(TFT9341_YELLOW);
-        TFT9341_SetFont(&Font16);
-        TFT9341_DrawChar(spi, 10, 54, 'E');
-        TFT9341_DrawChar(spi, 21, 54, 's');
-        TFT9341_DrawChar(spi, 32, 54, 'p');
-        TFT9341_DrawChar(spi, 43, 54, '3');
-        TFT9341_DrawChar(spi, 54, 54, '2');
-        TFT9341_SetTextColor(TFT9341_CYAN);
         TFT9341_SetBackColor(TFT9341_BLACK);
         TFT9341_SetFont(&Font12);
-        TFT9341_DrawChar(spi, 10, 70, 'E');
-        TFT9341_DrawChar(spi, 17, 70, 's');
-        TFT9341_DrawChar(spi, 24, 70, 'p');
-        TFT9341_DrawChar(spi, 31, 70, '3');
-        TFT9341_DrawChar(spi, 38, 70, '2');
-        TFT9341_SetTextColor(TFT9341_RED);
-        TFT9341_SetBackColor(TFT9341_GREEN);
-        TFT9341_SetFont(&Font8);
-        TFT9341_DrawChar(spi, 10, 82, 'E');
-        TFT9341_DrawChar(spi, 15, 82, 's');
-        TFT9341_DrawChar(spi, 20, 82, 'p');
-        TFT9341_DrawChar(spi, 25, 82, '3');
-        TFT9341_DrawChar(spi, 30, 82, '2');
-        TFT9341_SetTextColor(TFT9341_YELLOW);
-        TFT9341_SetBackColor(TFT9341_BLUE);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-        TFT9341_FillScreen(spi, TFT9341_BLACK);
-        for (i = 0; i < 4; i++)
-        {
-            TFT9341_SetRotation(spi, i % 4);
-            TFT9341_SetFont(&Font24);
-            TFT9341_FillScreen(spi, TFT9341_BLACK);
-            TFT9341_String(spi, 1, 100, "ABCDEF12345678");
-            TFT9341_SetFont(&Font20);
-            TFT9341_String(spi, 1, 124, "ABCDEFGHI12345678");
-            TFT9341_SetFont(&Font16);
-            TFT9341_String(spi, 1, 144, "ABCDEFGHIKL123456789");
-            TFT9341_SetFont(&Font12);
-            TFT9341_String(spi, 1, 160, "ABCDEFGHIKLMNOPQRSTUVWXY 123456789");
-            TFT9341_SetFont(&Font8);
-            TFT9341_String(spi, 1, 172, "ABCDEFGHIKLMNOPQRSTUVWXYZ 123456789ABCDEFGHIKL");
-            vTaskDelay(2000 / portTICK_PERIOD_MS);
-        }
-        TFT9341_SetRotation(spi, 0);
+
+        vTaskDelay(18000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 0, num_row(0), "I'm giving you a nightcall to tell you");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 140, num_row(1), "how I feel.");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 0, num_row(3), "I want to drive you through the night,");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 140, num_row(4), "down the hills.");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 0, num_row(6), "I'm gonna tell you something you");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 140, num_row(7), "don't want to hear,");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 0, num_row(9), "I'm gonna show you where its dark,");
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        TFT9341_String(spi, 140, num_row(10), "but have no fear.");
+
         vTaskDelay(10000 / portTICK_PERIOD_MS);
+        TFT9341_FillScreen(spi, TFT9341_BLACK);
     }
 }
