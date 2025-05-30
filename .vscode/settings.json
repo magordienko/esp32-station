@@ -32,5 +32,6 @@
         "spi_ili9341.h": "c",
         "main.h": "c",
         "task.h": "c"
-    }
+    },
+    "idf.pythonInstallPath": "/usr/bin/python3"
 }
