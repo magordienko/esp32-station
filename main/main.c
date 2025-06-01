@@ -1,6 +1,7 @@
 #include "main.h"
 
-static int display_dc_pin = -1; // Храним DC-пин здесь
+static int display_dc_pin = -1;        // Храним DC-пин здесь
+static uint16_t prev_sine_points[320]; // Массив для хранения предыдущих точек синусоиды
 
 static void spi_pre_transfer_callback(spi_transaction_t *t)
 {
@@ -210,7 +211,72 @@ void display_print_wrapped(display_state_t *state, const char *text)
     }
 }
 
-// Пример использования с разными типами текста
+void draw_sine_wave(display_state_t *state)
+{
+    const uint16_t width = 320;
+    const uint16_t height = 240;
+    const uint16_t center_y = height / 2;
+    const uint16_t amplitude = 100; // Амплитуда синусоиды
+    const int periods = 6;          // Количество периодов
+    const uint16_t color = TFT9341_WHITE;
+
+    // Очищаем экран
+    display_clear(state, TFT9341_BLACK);
+
+    // Рисуем синусоиду
+    uint16_t prev_x = 0;
+    uint16_t prev_y = center_y;
+
+    for (uint16_t x = 0; x < width; x++)
+    {
+        // Вычисляем y-координату для текущего x
+        double radians = (double)x / width * 2 * M_PI * periods;
+        double sine_value = sin(radians);
+        uint16_t y = center_y - (uint16_t)(sine_value * amplitude);
+
+        // Рисуем линию от предыдущей точки к текущей
+        TFT9341_DrawLine(state->spi, color, prev_x, prev_y, x, y);
+
+        prev_x = x;
+        prev_y = y;
+    }
+}
+
+void draw_animated_sine_wave(display_state_t *state)
+{
+    const uint16_t width = 320;
+    const uint16_t height = 240;
+    const uint16_t center_y = height / 2;
+    const uint16_t amplitude = 100;
+    const int periods = 3;
+    const uint16_t wave_color = TFT9341_WHITE;
+    const uint16_t bg_color = TFT9341_BLACK;
+    static float phase = 0.0f;
+
+    // Рисуем новую синусоиду, стирая предыдущую
+    for (uint16_t x = 0; x < width; x++)
+    {
+        // Стираем предыдущую точку (рисуем цветом фона)
+        TFT9341_DrawPixel(state->spi, x, prev_sine_points[x], bg_color);
+
+        // Вычисляем новую точку
+        double radians = (double)x / width * 2 * M_PI * periods + phase;
+        double sine_value = sin(radians);
+        uint16_t y = center_y - (uint16_t)(sine_value * amplitude);
+        prev_sine_points[x] = y;
+
+        // Рисуем новую точку
+        TFT9341_DrawPixel(state->spi, x, y, wave_color);
+    }
+
+    // Обновляем фазу
+    phase += 0.1f; // Уменьшили шаг для более плавной анимации
+    if (phase > 2 * M_PI)
+    {
+        phase -= 2 * M_PI;
+    }
+}
+
 void app_main()
 {
     display_config_t config = {
@@ -228,32 +294,18 @@ void app_main()
 
     TFT9341_SetRotation(display.spi, 3);
 
+    // Инициализация массива точек
+    for (int i = 0; i < 320; i++)
+    {
+        prev_sine_points[i] = config.height / 2;
+    }
+
+    // Очищаем экран перед началом анимации
+    display_clear(&display, TFT9341_BLACK);
+
     while (1)
     {
-        // 1. Проект (одна строка)
-        display_print_wrapped(&display, "Project: ESP32-Station");
-        vTaskDelay(pdMS_TO_TICKS(2000));
-
-        // 2. Дата (одна строка)
-        display_print_wrapped(&display, "Date: 01/06/2025 year");
-        vTaskDelay(pdMS_TO_TICKS(2000));
-
-        // 3. Текст с явными переносами (символ |)
-        display_print_wrapped(&display, "First paragraph.|Second paragraph with indent.");
-        vTaskDelay(pdMS_TO_TICKS(2000));
-
-        display_print_wrapped(&display, " ");
-        vTaskDelay(pdMS_TO_TICKS(2000));
-
-        // 4. Длинный текст с автопереносами и абзацами
-        const char *long_text =
-            "This is a long text that demonstrates automatic word wrapping. "
-            "The text should flow naturally across multiple lines.|"
-            "New paragraphs are marked by PALKA symbol and will have indentation. "
-            "The system handles both automatic wrapping and manual breaks.";
-
-        display_print_wrapped(&display, long_text);
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        display_clear(&display, TFT9341_BLACK);
+        draw_animated_sine_wave(&display);
+        vTaskDelay(pdMS_TO_TICKS(10)); // Увеличили FPS до ~20
     }
 }
