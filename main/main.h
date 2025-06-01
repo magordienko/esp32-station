@@ -8,20 +8,31 @@
 #include "esp_log.h"
 #include "spi_ili9341.h"
 
-#define num_row(i) i * 12
+#define DISPLAY_TAG "Display"
 
-// Конфиг пинов (теперь не хардкод)
 typedef struct
 {
-    int clk;
-    int mosi;
-    int dc;
-    int rst;
-    int cs;
-} DisplayPins_t;
+    spi_host_device_t spi_host;
+    struct
+    {
+        int clk;
+        int mosi;
+        int dc;
+        int rst;
+        int cs;
+    } pins;
+    uint16_t width;
+    uint16_t height;
+} display_config_t;
 
-// Лог-тэг
-static const char *TAG = "Display";
+typedef struct
+{
+    spi_device_handle_t spi;
+    uint16_t text_color;
+    uint16_t bg_color;
+    sFONT *font;
+} display_state_t;
 
-// Инициализация дисплея
-void display_init(const DisplayPins_t *pins, spi_device_handle_t *spi_out);
+esp_err_t display_init(const display_config_t *config, display_state_t *out_state);
+void display_draw_text(display_state_t *state, const char *text, uint16_t x, uint16_t y);
+void display_clear(display_state_t *state, uint16_t color);
