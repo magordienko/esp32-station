@@ -54,6 +54,7 @@ esp_err_t display_init(const display_config_t *config, display_state_t *out_stat
     out_state->text_color = TFT9341_GREEN;
     out_state->bg_color = TFT9341_BLACK;
     out_state->font = &Font12;
+    out_state->current_line = 0;
 
     return ESP_OK;
 }
@@ -69,9 +70,147 @@ void display_draw_text(display_state_t *state, const char *text, uint16_t x, uin
 void display_clear(display_state_t *state, uint16_t color)
 {
     TFT9341_FillScreen(state->spi, color);
+    state->current_line = 0; // Сбрасываем позицию курсора при очистке экрана
 }
 
-// Пример использования
+void display_reset_cursor(display_state_t *state)
+{
+    state->current_line = 0;
+}
+
+void display_print_wrapped(display_state_t *state, const char *text)
+{
+    char line_buffer[MAX_CHARS_PER_LINE + 1] = {0};
+    const char *start = text;
+    const char *end = text;
+    const char *last_space = NULL;
+    int line_length = 0;
+    bool new_paragraph = true; // Флаг нового абзаца
+
+    while (*start && state->current_line < MAX_LINES)
+    {
+        // Пропускаем разделители абзацев и пробелы в начале
+        while ((*start == PARAGRAPH_DELIMITER || *start == ' ') && !new_paragraph)
+            start++;
+
+        // Если это новый абзац и не первая строка - добавляем интервал
+        if (new_paragraph && state->current_line > 0)
+        {
+            state->current_line += PARAGRAPH_SPACING;
+            if (state->current_line >= MAX_LINES)
+            {
+                ESP_LOGE(DISPLAY_TAG, "Screen overflow! Maximum lines reached.");
+                break;
+            }
+        }
+
+        // Находим конец текущего слова или разделитель
+        end = start;
+        last_space = NULL;
+        line_length = 0;
+        bool found_delimiter = false;
+
+        while (*end && line_length < MAX_CHARS_PER_LINE && !found_delimiter)
+        {
+            if (*end == PARAGRAPH_DELIMITER)
+            {
+                found_delimiter = true;
+                break;
+            }
+            if (*end == ' ')
+            {
+                last_space = end;
+            }
+            end++;
+            line_length++;
+        }
+
+        // Если нашли разделитель абзаца
+        if (found_delimiter)
+        {
+            // Копируем текст до разделителя
+            int copy_len = end - start;
+            if (copy_len > 0)
+            {
+                strncpy(line_buffer, start, copy_len);
+                line_buffer[copy_len] = '\0';
+
+                // Выводим строку с отступом для нового абзаца
+                uint16_t x_pos = new_paragraph ? (LEFT_MARGIN + INDENT_WIDTH) : LEFT_MARGIN;
+                display_draw_text(state, line_buffer, x_pos, TOP_MARGIN + state->current_line * LINE_HEIGHT);
+                state->current_line++;
+            }
+
+            // Устанавливаем флаг нового абзаца для следующей итерации
+            new_paragraph = true;
+            start = end + 1; // Пропускаем разделитель
+
+            continue;
+        }
+
+        // Если мы достигли конца строки
+        if (*end == '\0')
+        {
+            // Копируем оставшийся текст
+            int copy_len = end - start;
+            strncpy(line_buffer, start, copy_len);
+            line_buffer[copy_len] = '\0';
+
+            // Выводим строку с отступом для нового абзаца
+            uint16_t x_pos = new_paragraph ? (LEFT_MARGIN + INDENT_WIDTH) : LEFT_MARGIN;
+            display_draw_text(state, line_buffer, x_pos, TOP_MARGIN + state->current_line * LINE_HEIGHT);
+            state->current_line++;
+
+            break;
+        }
+
+        // Если строка слишком длинная и нужно сделать перенос
+        if (line_length >= MAX_CHARS_PER_LINE)
+        {
+            // Если есть пробел для переноса
+            if (last_space != NULL && last_space > start)
+            {
+                // Копируем текст до пробела
+                int copy_len = last_space - start;
+                strncpy(line_buffer, start, copy_len);
+                line_buffer[copy_len] = '\0';
+
+                // Выводим строку с отступом
+                uint16_t x_pos = new_paragraph ? (LEFT_MARGIN + INDENT_WIDTH) : LEFT_MARGIN;
+                display_draw_text(state, line_buffer, x_pos, TOP_MARGIN + state->current_line * LINE_HEIGHT);
+                state->current_line++;
+                new_paragraph = false;
+
+                // Перемещаем указатель
+                start = last_space + 1;
+            }
+            else // Принудительный перенос
+            {
+                // Копируем максимально возможное количество символов
+                strncpy(line_buffer, start, MAX_CHARS_PER_LINE);
+                line_buffer[MAX_CHARS_PER_LINE] = '\0';
+
+                // Выводим строку с отступом
+                uint16_t x_pos = new_paragraph ? (LEFT_MARGIN + INDENT_WIDTH) : LEFT_MARGIN;
+                display_draw_text(state, line_buffer, x_pos, TOP_MARGIN + state->current_line * LINE_HEIGHT);
+                state->current_line++;
+                new_paragraph = false;
+
+                // Перемещаем указатель
+                start += MAX_CHARS_PER_LINE;
+            }
+        }
+
+        // Проверяем, не вышли ли за пределы экрана
+        if (state->current_line >= MAX_LINES)
+        {
+            ESP_LOGE(DISPLAY_TAG, "Screen overflow! Maximum lines reached.");
+            break;
+        }
+    }
+}
+
+// Пример использования с разными типами текста
 void app_main()
 {
     display_config_t config = {
@@ -89,35 +228,31 @@ void app_main()
 
     TFT9341_SetRotation(display.spi, 3);
 
-    const char *lines[] = {
-        "Project: EPS32-Station.",
-        "Date: 01/06/2025 year.",
-        "",
-        "Line 4",
-        "Line 5",
-        "Line 6",
-        "Line 7",
-        "Line 8",
-        "Line 9",
-        "Line 10",
-        "Line 11",
-        "Line 12",
-        "Line 13",
-        "Line 14",
-        "Line 15",
-        "Line 16",
-        "Line 17",
-        "Line 18",
-        "Line 19: Midnight frost: owls call, wind s"};
-
     while (1)
     {
-        for (uint8_t i = 0; i < sizeof(lines) / sizeof(lines[0]); i++)
-        {
-            uint16_t x = 13;
-            uint16_t y = 6 + i * 12;
-            display_draw_text(&display, lines[i], x, y);
-        }
+        // 1. Проект (одна строка)
+        display_print_wrapped(&display, "Project: ESP32-Station");
+        vTaskDelay(pdMS_TO_TICKS(2000));
+
+        // 2. Дата (одна строка)
+        display_print_wrapped(&display, "Date: 01/06/2025 year");
+        vTaskDelay(pdMS_TO_TICKS(2000));
+
+        // 3. Текст с явными переносами (символ |)
+        display_print_wrapped(&display, "First paragraph.|Second paragraph with indent.");
+        vTaskDelay(pdMS_TO_TICKS(2000));
+
+        display_print_wrapped(&display, " ");
+        vTaskDelay(pdMS_TO_TICKS(2000));
+
+        // 4. Длинный текст с автопереносами и абзацами
+        const char *long_text =
+            "This is a long text that demonstrates automatic word wrapping. "
+            "The text should flow naturally across multiple lines.|"
+            "New paragraphs are marked by PALKA symbol and will have indentation. "
+            "The system handles both automatic wrapping and manual breaks.";
+
+        display_print_wrapped(&display, long_text);
         vTaskDelay(pdMS_TO_TICKS(5000));
         display_clear(&display, TFT9341_BLACK);
     }
