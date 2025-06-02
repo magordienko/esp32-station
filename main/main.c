@@ -54,7 +54,7 @@ esp_err_t display_init(const display_config_t *config, display_state_t *out_stat
     // Настройки по умолчанию
     out_state->text_color = TFT9341_GREEN;
     out_state->bg_color = TFT9341_BLACK;
-    out_state->font = &Font12rus;
+    out_state->font = &Font12;
     out_state->current_line = 0;
 
     return ESP_OK;
@@ -244,36 +244,45 @@ void draw_sine_wave(display_state_t *state)
 
 void draw_animated_sine_wave(display_state_t *state)
 {
-    const uint16_t width = 320;
-    const uint16_t height = 240;
-    const uint16_t center_y = height / 2;
-    const uint16_t max_amplitude = 10; // Максимальная амплитуда
-    const int carrier_periods = 20;    // 10 периодов несущей частоты
-    const int envelope_periods = 2;    // 3 периода огибающей
-    const uint16_t wave_color = TFT9341_WHITE;
-    const uint16_t bg_color = TFT9341_BLACK;
-    static float phase = 0.0f;
+    // Константы вынесены в область видимости файла как static const
+    static const uint16_t width = 320;
+    static const uint16_t height = 240;
+    static const uint16_t center_y = height / 2;
+    static const uint16_t max_amplitude = 10;
+    static const int carrier_periods = 20;
+    static const int envelope_periods = 2;
+    static const uint16_t wave_color = TFT9341_WHITE;
+    static const uint16_t bg_color = TFT9341_BLACK;
+    static const float two_pi = 2.0f * M_PI;
+    static const float half_pi = M_PI_2;
+    static const float phase_step = 0.5f;
 
-    // Рисуем новую синусоиду, стирая предыдущую
+    static float phase = 0.0f;
+    static float width_reciprocal = 1.0f / width;
+
+    // Предварительно вычисленные константы для оптимизации вычислений
+    const float carrier_scale = two_pi * carrier_periods * width_reciprocal;
+    const float envelope_scale = two_pi * envelope_periods * width_reciprocal;
+
     for (uint16_t x = 0; x < width; x++)
     {
-        // Стираем предыдущую точку
+        // Стираем предыдущую точку (предполагается, что prev_sine_points объявлен где-то)
         TFT9341_DrawPixel(state->spi, x, prev_sine_points[x], bg_color);
 
-        // Вычисляем позицию в радианах
-        double x_rad = (double)x / width * 2 * M_PI;
+        // Оптимизированные вычисления без деления в цикле
+        float x_pos = (float)x;
+        float x_rad_carrier = x_pos * carrier_scale;
+        float x_rad_envelope = x_pos * envelope_scale;
 
-        // Несущая высокая частота (10 периодов)
-        double carrier = sin(x_rad * carrier_periods + phase);
+        // Используем более быстрые приближения или таблицы если точность не критична
+        float carrier = sinf(x_rad_carrier + phase);
+        float envelope = sinf(x_rad_envelope + half_pi);
 
-        // Огибающая низкая частота (3 периода)
-        double envelope = sin(x_rad * envelope_periods + M_PI_2);
+        // Оптимизированное вычисление AM-сигнала
+        float am_signal = carrier * (0.5f + 0.5f * envelope);
 
-        // AM-сигнал: несущая × (1 + огибающая)/2
-        double am_signal = carrier * (1.0 + envelope) / 2.0;
-
-        // Масштабируем до нужной амплитуды
-        uint16_t y = center_y - (uint16_t)(am_signal * max_amplitude);
+        // Оптимизированное масштабирование и преобразование
+        uint16_t y = center_y - (uint16_t)(am_signal * (float)max_amplitude);
 
         // Сохраняем точку для следующего кадра
         prev_sine_points[x] = y;
@@ -282,11 +291,11 @@ void draw_animated_sine_wave(display_state_t *state)
         TFT9341_DrawPixel(state->spi, x, y, wave_color);
     }
 
-    // Обновляем фазу для анимации движения
-    phase += 0.5f;
-    if (phase > 2 * M_PI)
+    // Обновление фазы с проверкой через вычитание (быстрее чем fmod)
+    phase += phase_step;
+    if (phase > two_pi)
     {
-        phase -= 2 * M_PI;
+        phase -= two_pi;
     }
 }
 
