@@ -48,3 +48,6 @@ void display_draw_text(display_state_t *state, const char *text, uint16_t x, uin
 void display_clear(display_state_t *state, uint16_t color);
 void display_print_wrapped(display_state_t *state, const char *text);
 void display_reset_cursor(display_state_t *state);
+void display_print_wrapped_rus(display_state_t *state, const char *text);
+char *get_build_date(void);
+char *combine_strings(const char *str1, const char *str2);
