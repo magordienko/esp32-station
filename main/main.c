@@ -317,9 +317,10 @@ void app_main()
     display_clear(&display, TFT9341_BLACK);
     display_print_wrapped(&display, "Only long text in English can cover complex ideas thoroughly, but this one is brief by design-just twenty words DDDDDDDDDWWWWW. Eta function ne mojet v russkiy.");
 
-    TFT9341_DrawUTF8String(display.spi, 10, 150, "Привет, World!"); // Смешанный русский/английский текст
-    TFT9341_DrawUTF8String(display.spi, 10, 170, "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ");
-    TFT9341_DrawUTF8String(display.spi, 10, 190, "абвгдежзийклмнопрстуфхцчшщъыьэюя");
+    TFT9341_DrawUTF8String(display.spi, 13, 150, "Привет, World! Ахуеть как долго я фиксил"); // Смешанный русский/английский текст
+    TFT9341_DrawUTF8String(display.spi, 13, 170, "Ростик - Пидор!");
+    TFT9341_DrawUTF8String(display.spi, 13, 190, "ДАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ");
+    TFT9341_DrawUTF8String(display.spi, 13, 210, "абвгдежзийклмнопрстуфхцчшщъыьэюя");
 
     while (1)
     {

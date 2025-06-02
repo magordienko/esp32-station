@@ -498,14 +498,15 @@ void TFT9341_DrawUTF8Char(spi_device_handle_t spi, uint16_t *x, uint16_t y, cons
 {
     uint16_t addr = utf8_to_font_index(utf8_char);
     uint8_t *char_data = (uint8_t *)&(lcdprop.pFont->table[addr]);
+    uint8_t offset = 8 * ((lcdprop.pFont->Width + 7) / 8) - lcdprop.pFont->Width;
 
     // Оригинальный код отрисовки
-    for (uint8_t i = 0; i < 12; i++)
+    for (uint8_t i = 0; i < lcdprop.pFont->Height; i++)
     { // 12 строк
         uint8_t line = char_data[i];
-        for (uint8_t j = 0; j < 7; j++)
+        for (uint8_t j = 0; j < lcdprop.pFont->Width; j++)
         { // 7 пикселей в строке
-            if (line & (1 << (6 - j)))
+            if (line & (1 << (lcdprop.pFont->Width - 1 - j + offset)))
             {
                 TFT9341_DrawPixel(spi, *x + j, y + i, lcdprop.TextColor);
             }
@@ -515,7 +516,7 @@ void TFT9341_DrawUTF8Char(spi_device_handle_t spi, uint16_t *x, uint16_t y, cons
             }
         }
     }
-    *x += 7; // Сдвигаем позицию X
+    *x += lcdprop.pFont->Width; // Сдвигаем позицию X
 }
 
 void TFT9341_DrawUTF8String(spi_device_handle_t spi, uint16_t x, uint16_t y, const char *str)
