@@ -267,7 +267,7 @@ void draw_animated_sine_wave(display_state_t *state)
         double carrier = sin(x_rad * carrier_periods + phase);
 
         // Огибающая низкая частота (3 периода)
-        double envelope = sin(x_rad * envelope_periods);
+        double envelope = sin(x_rad * envelope_periods + M_PI_2);
 
         // AM-сигнал: несущая × (1 + огибающая)/2
         double am_signal = carrier * (1.0 + envelope) / 2.0;
@@ -325,6 +325,6 @@ void app_main()
     while (1)
     {
         draw_animated_sine_wave(&display);
-        vTaskDelay(pdMS_TO_TICKS(10)); // Увеличили FPS до ~20
+        vTaskDelay(pdMS_TO_TICKS(10)); // Увеличили FPS до ~100
     }
 }
