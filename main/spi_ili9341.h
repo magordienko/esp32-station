@@ -16,6 +16,8 @@
 #define PIN_NUM_DC 27
 #define PIN_NUM_RST 26
 #define PIN_NUM_CS 25
+#define FIRST_RUSSIAN_ADDR 1140 // Адрес первой русской буквы в таблице
+#define CHAR_WIDTH 12           // Количество байт на символ (12 строк × 1 байт)
 //---------------------------------------------------------------------
 #define swap(a, b)     \
     {                  \
@@ -54,6 +56,8 @@ void TFT9341_SetFont(sFONT *pFonts);
 void TFT9341_DrawChar(spi_device_handle_t spi, uint16_t x, uint16_t y, uint8_t c);
 void TFT9341_String(spi_device_handle_t spi, uint16_t x, uint16_t y, char *str);
 void TFT9341_SetRotation(spi_device_handle_t spi, uint8_t r);
+void TFT9341_DrawUTF8Char(spi_device_handle_t spi, uint16_t *x, uint16_t y, const char *utf8_char);
+void TFT9341_DrawUTF8String(spi_device_handle_t spi, uint16_t x, uint16_t y, const char *str);
 void TFT9341_ini(spi_device_handle_t spi, uint16_t w_size, uint16_t h_size);
 //---------------------------------------------------------------------
 #endif /* MAIN_SPI_ILI9341_H_ */

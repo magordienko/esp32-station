@@ -451,6 +451,88 @@ void TFT9341_SetRotation(spi_device_handle_t spi, uint8_t r)
 }
 //-------------------------------------------------------------------
 
+uint16_t utf8_to_font_index(const char *utf8_char)
+{
+    // 1. Определяем Unicode code point из UTF-8
+    uint32_t code_point = 0;
+    uint8_t first_byte = utf8_char[0];
+
+    if ((first_byte & 0x80) == 0)
+    {
+        // ASCII символ (0x00-0x7F)
+        code_point = first_byte;
+    }
+    else if ((first_byte & 0xE0) == 0xC0)
+    {
+        // 2-байтовый UTF-8 (0xC0-0xDF)
+        code_point = ((utf8_char[0] & 0x1F) << 6) | (utf8_char[1] & 0x3F);
+    }
+    else
+    {
+        // Неподдерживаемый символ
+        return 0; // Возвращаем адрес пробела
+    }
+
+    // 2. Преобразуем в индекс таблицы
+    if (code_point >= ' ' && code_point <= '~')
+    {
+        // ASCII символы (адрес = (code_point - ' ') * 12)
+        return (code_point - ' ') * CHAR_WIDTH;
+    }
+    else if (code_point >= 0x0410 && code_point <= 0x042F)
+    {
+        // Русские заглавные (А-Я) -> 1140 + (code_point - 0x0410) * 12
+        return FIRST_RUSSIAN_ADDR + (code_point - 0x0410) * CHAR_WIDTH;
+    }
+    else if (code_point >= 0x0430 && code_point <= 0x044F)
+    {
+        // Русские строчные (а-я) -> 1140 + (code_point - 0x0430 + 32) * 12
+        return FIRST_RUSSIAN_ADDR + (code_point - 0x0430 + 32) * CHAR_WIDTH;
+    }
+
+    // Неподдерживаемый символ -> пробел
+    return 0;
+}
+
+void TFT9341_DrawUTF8Char(spi_device_handle_t spi, uint16_t *x, uint16_t y, const char *utf8_char)
+{
+    uint16_t addr = utf8_to_font_index(utf8_char);
+    uint8_t *char_data = (uint8_t *)&(lcdprop.pFont->table[addr]);
+
+    // Оригинальный код отрисовки
+    for (uint8_t i = 0; i < 12; i++)
+    { // 12 строк
+        uint8_t line = char_data[i];
+        for (uint8_t j = 0; j < 7; j++)
+        { // 7 пикселей в строке
+            if (line & (1 << (6 - j)))
+            {
+                TFT9341_DrawPixel(spi, *x + j, y + i, lcdprop.TextColor);
+            }
+            else
+            {
+                TFT9341_DrawPixel(spi, *x + j, y + i, lcdprop.BackColor);
+            }
+        }
+    }
+    *x += 7; // Сдвигаем позицию X
+}
+
+void TFT9341_DrawUTF8String(spi_device_handle_t spi, uint16_t x, uint16_t y, const char *str)
+{
+    while (*str)
+    {
+        // Определяем длину символа UTF-8
+        uint8_t char_len = ((*str & 0x80) == 0) ? 1 : 2;
+
+        // Выводим символ
+        TFT9341_DrawUTF8Char(spi, &x, y, str);
+
+        // Переходим к следующему символу
+        str += char_len;
+    }
+}
+
 void TFT9341_ini(spi_device_handle_t spi, uint16_t w_size, uint16_t h_size)
 {
     uint8_t data[15];

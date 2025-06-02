@@ -54,7 +54,7 @@ esp_err_t display_init(const display_config_t *config, display_state_t *out_stat
     // Настройки по умолчанию
     out_state->text_color = TFT9341_GREEN;
     out_state->bg_color = TFT9341_BLACK;
-    out_state->font = &Font12;
+    out_state->font = &Font12rus;
     out_state->current_line = 0;
 
     return ESP_OK;
@@ -247,8 +247,9 @@ void draw_animated_sine_wave(display_state_t *state)
     const uint16_t width = 320;
     const uint16_t height = 240;
     const uint16_t center_y = height / 2;
-    const uint16_t amplitude = 100;
-    const int periods = 3;
+    const uint16_t max_amplitude = 10; // Максимальная амплитуда
+    const int carrier_periods = 20;    // 10 периодов несущей частоты
+    const int envelope_periods = 2;    // 3 периода огибающей
     const uint16_t wave_color = TFT9341_WHITE;
     const uint16_t bg_color = TFT9341_BLACK;
     static float phase = 0.0f;
@@ -256,21 +257,33 @@ void draw_animated_sine_wave(display_state_t *state)
     // Рисуем новую синусоиду, стирая предыдущую
     for (uint16_t x = 0; x < width; x++)
     {
-        // Стираем предыдущую точку (рисуем цветом фона)
+        // Стираем предыдущую точку
         TFT9341_DrawPixel(state->spi, x, prev_sine_points[x], bg_color);
 
-        // Вычисляем новую точку
-        double radians = (double)x / width * 2 * M_PI * periods + phase;
-        double sine_value = sin(radians);
-        uint16_t y = center_y - (uint16_t)(sine_value * amplitude);
+        // Вычисляем позицию в радианах
+        double x_rad = (double)x / width * 2 * M_PI;
+
+        // Несущая высокая частота (10 периодов)
+        double carrier = sin(x_rad * carrier_periods + phase);
+
+        // Огибающая низкая частота (3 периода)
+        double envelope = sin(x_rad * envelope_periods);
+
+        // AM-сигнал: несущая × (1 + огибающая)/2
+        double am_signal = carrier * (1.0 + envelope) / 2.0;
+
+        // Масштабируем до нужной амплитуды
+        uint16_t y = center_y - (uint16_t)(am_signal * max_amplitude);
+
+        // Сохраняем точку для следующего кадра
         prev_sine_points[x] = y;
 
         // Рисуем новую точку
         TFT9341_DrawPixel(state->spi, x, y, wave_color);
     }
 
-    // Обновляем фазу
-    phase += 0.1f; // Уменьшили шаг для более плавной анимации
+    // Обновляем фазу для анимации движения
+    phase += 0.5f;
     if (phase > 2 * M_PI)
     {
         phase -= 2 * M_PI;
@@ -302,6 +315,11 @@ void app_main()
 
     // Очищаем экран перед началом анимации
     display_clear(&display, TFT9341_BLACK);
+    display_print_wrapped(&display, "Only long text in English can cover complex ideas thoroughly, but this one is brief by design-just twenty words DDDDDDDDDWWWWW. Eta function ne mojet v russkiy.");
+
+    TFT9341_DrawUTF8String(display.spi, 10, 150, "Привет, World!"); // Смешанный русский/английский текст
+    TFT9341_DrawUTF8String(display.spi, 10, 170, "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ");
+    TFT9341_DrawUTF8String(display.spi, 10, 190, "абвгдежзийклмнопрстуфхцчшщъыьэюя");
 
     while (1)
     {
