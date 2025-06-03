@@ -1,14 +1,7 @@
-/**
- ******************************************************************************
- * @file    Font12_rus.c
- * @author  Your Name
- * @brief   This file provides Cyrillic Font12 with QWERTY-to-ЙЦУКЕН mapping
- ******************************************************************************
- */
-
 #include "fonts.h"
 
-const uint8_t Font12rus_Table[] =
+// Определение шрифта (данные символов)
+static const uint8_t Font12_Table[] =
 	{
 		// @0 ' ' (7 pixels wide)
 		0x00, //
@@ -2238,8 +2231,9 @@ const uint8_t Font12rus_Table[] =
 
 };
 
-sFONT Font12 = {
-	Font12rus_Table,
-	7,	/* Width */
-	12, /* Height */
+// Определение структуры шрифта
+const sFONT Font12 = {
+	.table = Font12_Table,
+	.Width = 7,
+	.Height = 12,
 };
