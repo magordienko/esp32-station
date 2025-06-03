@@ -19,6 +19,8 @@
 #define PARAGRAPH_SPACING 0     // Дополнительный интервал между абзацами (в строках)
 #define PARAGRAPH_DELIMITER '|' // Символ разделителя абзацев
 
+gpio_num_t display_dc_pin; // Храним номер DC-пин здесь
+
 typedef struct
 {
     spi_host_device_t spi_host;
@@ -42,6 +44,12 @@ typedef struct
     sFONT *font;
     uint8_t current_line; // Текущая строка для вывода
 } display_state_t;
+
+typedef struct
+{
+    uint16_t prev_sine_points[320];
+    float phase;
+} sine_animation_state_t;
 
 esp_err_t display_init(const display_config_t *config, display_state_t *out_state);
 void display_draw_text(display_state_t *state, const char *text, uint16_t x, uint16_t y);

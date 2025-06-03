@@ -1,11 +1,8 @@
 #include "main.h"
 
-static int display_dc_pin = -1;        // Храним DC-пин здесь
-static uint16_t prev_sine_points[320]; // Массив для хранения предыдущих точек синусоиды
-
-static void spi_pre_transfer_callback(spi_transaction_t *t)
+static void spi_pre_transfer_callback(spi_transaction_t *trans)
 {
-    int dc_level = (int)t->user;
+    int dc_level = (int)trans->user;
     gpio_set_level(display_dc_pin, dc_level);
 }
 
@@ -242,9 +239,9 @@ void draw_sine_wave(display_state_t *state)
     }
 }
 
-void draw_animated_sine_wave(display_state_t *state)
+void draw_animated_sine_wave(display_state_t *state, sine_animation_state_t *anim_state)
 {
-    // Константы вынесены в область видимости файла как static const
+    // Константы
     static const uint16_t width = 320;
     static const uint16_t height = 240;
     static const uint16_t center_y = height / 2;
@@ -256,46 +253,40 @@ void draw_animated_sine_wave(display_state_t *state)
     static const float two_pi = 2.0f * M_PI;
     static const float half_pi = M_PI_2;
     static const float phase_step = 0.5f;
+    static const float width_reciprocal = 1.0f / width;
 
-    static float phase = 0.0f;
-    static float width_reciprocal = 1.0f / width;
-
-    // Предварительно вычисленные константы для оптимизации вычислений
+    // Предварительно вычисленные константы
     const float carrier_scale = two_pi * carrier_periods * width_reciprocal;
     const float envelope_scale = two_pi * envelope_periods * width_reciprocal;
 
     for (uint16_t x = 0; x < width; x++)
     {
-        // Стираем предыдущую точку (предполагается, что prev_sine_points объявлен где-то)
-        TFT9341_DrawPixel(state->spi, x, prev_sine_points[x], bg_color);
+        // Стираем предыдущую точку
+        TFT9341_DrawPixel(state->spi, x, anim_state->prev_sine_points[x], bg_color);
 
-        // Оптимизированные вычисления без деления в цикле
+        // Вычисляем новую точку
         float x_pos = (float)x;
         float x_rad_carrier = x_pos * carrier_scale;
         float x_rad_envelope = x_pos * envelope_scale;
 
-        // Используем более быстрые приближения или таблицы если точность не критична
-        float carrier = sinf(x_rad_carrier + phase);
+        float carrier = sinf(x_rad_carrier + anim_state->phase);
         float envelope = sinf(x_rad_envelope + half_pi);
-
-        // Оптимизированное вычисление AM-сигнала
         float am_signal = carrier * (0.5f + 0.5f * envelope);
 
-        // Оптимизированное масштабирование и преобразование
         uint16_t y = center_y - (uint16_t)(am_signal * (float)max_amplitude);
 
         // Сохраняем точку для следующего кадра
-        prev_sine_points[x] = y;
+        anim_state->prev_sine_points[x] = y;
 
         // Рисуем новую точку
         TFT9341_DrawPixel(state->spi, x, y, wave_color);
     }
 
-    // Обновление фазы с проверкой через вычитание (быстрее чем fmod)
-    phase += phase_step;
-    if (phase > two_pi)
+    // Обновление фазы
+    anim_state->phase += phase_step;
+    if (anim_state->phase > two_pi)
     {
-        phase -= two_pi;
+        anim_state->phase -= two_pi;
     }
 }
 
@@ -508,6 +499,14 @@ void app_main()
         .height = 240};
 
     display_state_t display;
+    sine_animation_state_t anim_state = {0};
+
+    // Инициализация массива точек
+    for (int i = 0; i < 320; i++)
+    {
+        anim_state.prev_sine_points[i] = config.height / 2;
+    }
+
     if (display_init(&config, &display) != ESP_OK)
     {
         ESP_LOGE(DISPLAY_TAG, "Display initialization failed!");
@@ -515,27 +514,16 @@ void app_main()
     }
 
     TFT9341_SetRotation(display.spi, 3);
-
-    // Инициализация массива точек
-    for (int i = 0; i < 320; i++)
-    {
-        prev_sine_points[i] = config.height / 2;
-    }
-
-    // Очищаем экран перед началом анимации
     display_clear(&display, TFT9341_BLACK);
-
     display_print_wrapped_rus(&display, "Проект: \"ESP32-Station\"");
 
-    // Получаем дату сборки и объединяем с текстом
     char *firmware_date = get_build_date();
-    char *firmware_text = combine_strings("Дата прошивки: ", firmware_date);
-
+    char *firmware_text = combine_strings("Дата сборки прошивки: ", firmware_date);
     display_print_wrapped_rus(&display, firmware_text);
 
     while (1)
     {
-        draw_animated_sine_wave(&display);
-        vTaskDelay(pdMS_TO_TICKS(10)); // Увеличили FPS до ~100
+        draw_animated_sine_wave(&display, &anim_state);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

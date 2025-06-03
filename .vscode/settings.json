@@ -32,7 +32,13 @@
         "spi_ili9341.h": "c",
         "main.h": "c",
         "task.h": "c",
-        "fonts.h": "c"
+        "fonts.h": "c",
+        "spi_common.h": "c",
+        "spi_types.h": "c",
+        "esp_lcd_common.h": "c",
+        "esp_lcd_panel_io.h": "c",
+        "esp_attr.h": "c",
+        "esp_lcd_panel_io_interface.h": "c"
     },
     "idf.pythonInstallPath": "/usr/bin/python3"
 }
