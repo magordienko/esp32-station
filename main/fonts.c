@@ -1333,7 +1333,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @0 'А' (7 pixels wide)
+		// @1140 'А' (7 pixels wide)
 		0x00, //
 		0x30, //   ##
 		0x10, //    #
@@ -1347,7 +1347,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @12 'Б' (7 pixels wide)
+		// @1152 'Б' (7 pixels wide)
 		0x00, //
 		0x7C, //  #####
 		0x40, //  #
@@ -1361,7 +1361,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @24 'В' (7 pixels wide)
+		// @1164 'В' (7 pixels wide)
 		0x00, //
 		0xF8, // #####
 		0x44, //  #   #
@@ -1375,7 +1375,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @36 'Г' (7 pixels wide)
+		// @1176 'Г' (7 pixels wide)
 		0x00, //
 		0x7C, //  #####
 		0x40, //  #
@@ -1389,7 +1389,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @48 'Д' (7 pixels wide)
+		// @1188 'Д' (7 pixels wide)
 		0x00, //
 		0x3C, //   ####
 		0x24, //   #  #
@@ -1403,7 +1403,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @60 'Е' (7 pixels wide)
+		// @1200 'Е' (7 pixels wide)
 		0x00, //
 		0xFC, // ######
 		0x44, //  #   #
@@ -1417,7 +1417,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @72 'Ж' (7 pixels wide)
+		// @1212 'Ж' (7 pixels wide)
 		0x00, //
 		0x92, // #  #  #
 		0x92, // #  #  #
@@ -1431,7 +1431,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @84 'З' (7 pixels wide)
+		// @1224 'З' (7 pixels wide)
 		0x00, //
 		0x38, //   ###
 		0x44, //  #   #
@@ -1445,7 +1445,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @96 'И' (7 pixels wide)
+		// @1236 'И' (7 pixels wide)
 		0x00, //
 		0xEE, // ### ###
 		0x44, //  #   #
@@ -1459,7 +1459,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @108 'Й' (7 pixels wide)
+		// @1248 'Й' (7 pixels wide)
 		0x24, //   #  #
 		0xEE, // ### ###
 		0x44, //  #   #
@@ -1473,7 +1473,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @120 'К' (7 pixels wide)
+		// @1260 'К' (7 pixels wide)
 		0x00, //
 		0xEE, // ### ###
 		0x44, //  #   #
@@ -1487,7 +1487,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @132 'Л' (7 pixels wide)
+		// @1272 'Л' (7 pixels wide)
 		0x00, //
 		0x3E, //   #####
 		0x24, //   #  #
@@ -1501,7 +1501,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @144 'М' (7 pixels wide)
+		// @1284 'М' (7 pixels wide)
 		0x00, //
 		0xEE, // ### ###
 		0x6C, //  ## ##
@@ -1515,7 +1515,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @156 'Н' (7 pixels wide)
+		// @1296 'Н' (7 pixels wide)
 		0x00, //
 		0xEE, // ### ###
 		0x44, //  #   #
@@ -1529,7 +1529,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @168 'О' (7 pixels wide)
+		// @1308 'О' (7 pixels wide)
 		0x00, //
 		0x38, //   ###
 		0x44, //  #   #
@@ -1543,7 +1543,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @180 'П' (7 pixels wide)
+		// @1320 'П' (7 pixels wide)
 		0x00, //
 		0x7C, //  #####
 		0x44, //  #   #
@@ -1557,7 +1557,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @192 'Р' (7 pixels wide)
+		// @1332 'Р' (7 pixels wide)
 		0x00, //
 		0xF8, // #####
 		0x44, //  #   #
@@ -1571,7 +1571,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @204 'С' (7 pixels wide)
+		// @1344 'С' (7 pixels wide)
 		0x00, //
 		0x3C, //   ####
 		0x44, //  #   #
@@ -1585,7 +1585,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @216 'Т' (7 pixels wide)
+		// @1356 'Т' (7 pixels wide)
 		0x00, //
 		0xFE, // #######
 		0x92, // #  #  #
@@ -1599,7 +1599,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @228 'У' (7 pixels wide)
+		// @1368 'У' (7 pixels wide)
 		0x00, //
 		0xE6, // ###  ##
 		0x44, //  #   #
@@ -1613,7 +1613,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @240 'Ф' (7 pixels wide)
+		// @1380 'Ф' (7 pixels wide)
 		0x00, //
 		0x10, //    #
 		0x7C, //  #####
@@ -1627,7 +1627,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @252 'Х' (7 pixels wide)
+		// @1392 'Х' (7 pixels wide)
 		0x00, //
 		0xC6, // ##   ##
 		0x44, //  #   #
@@ -1641,7 +1641,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @264 'Ц' (7 pixels wide)
+		// @1404 'Ц' (7 pixels wide)
 		0x00, //
 		0xCC, // ##  ##
 		0x44, //  #   #
@@ -1655,7 +1655,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @276 'Ч' (7 pixels wide)
+		// @1416 'Ч' (7 pixels wide)
 		0x00, //
 		0xEE, // ### ###
 		0x44, //  #   #
@@ -1669,35 +1669,35 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @288 'Ш' (7 pixels wide)
+		// @1428 'Ш' (7 pixels wide)
 		0x00, //
-		0x54, // ### ###
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
-		0x7C, // #######
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x7C, //  #####
 		0x00, //
 		0x00, //
 		0x00, //
 
-		// @300 'Щ' (7 pixels wide)
+		// @1440 'Щ' (7 pixels wide)
 		0x00, //
-		0x54, // ### ###
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
-		0x54, //  #   #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
 		0x7E, //  ######
 		0x02, //       #
 		0x02, //       #
 		0x00, //
 		0x00, //
 
-		// @312 'Ъ' (7 pixels wide)
+		// @1452 'Ъ' (7 pixels wide)
 		0x00, //
 		0xE0, // ###
 		0x20, //   #
@@ -1711,7 +1711,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @324 'Ы' (7 pixels wide)
+		// @1464 'Ы' (7 pixels wide)
 		0x00, //
 		0x84, // #    #
 		0x84, // #    #
@@ -1725,7 +1725,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @336 'Ь' (7 pixels wide)
+		// @1476 'Ь' (7 pixels wide)
 		0x00, //
 		0x40, //  #
 		0x40, //  #
@@ -1739,7 +1739,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @348 'Э' (7 pixels wide)
+		// @1488 'Э' (7 pixels wide)
 		0x00, //
 		0x38, //   ###
 		0x44, //  #   #
@@ -1753,7 +1753,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @360 'Ю' (7 pixels wide)
+		// @1500 'Ю' (7 pixels wide)
 		0x00, //
 		0xDC, // ## ###
 		0x62, //  ##   #
@@ -1767,7 +1767,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @372 'Я' (7 pixels wide)
+		// @1512 'Я' (7 pixels wide)
 		0x00, //
 		0x3E, //   #####
 		0x44, //  #   #
@@ -1781,7 +1781,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @384 'а' (7 pixels wide)
+		// @1524 'а' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1795,7 +1795,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @396 'б' (7 pixels wide)
+		// @1536 'б' (7 pixels wide)
 		0x00, //
 		0x1C, //    ###
 		0x20, //   #
@@ -1809,7 +1809,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @408 'в' (7 pixels wide)
+		// @1548 'в' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1823,7 +1823,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @420 'г' (7 pixels wide)
+		// @1560 'г' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1837,7 +1837,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @432 'д' (7 pixels wide)
+		// @1572 'д' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1851,7 +1851,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @444 'е' (7 pixels wide)
+		// @1584 'е' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1865,7 +1865,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @456 'ж' (7 pixels wide)
+		// @1596 'ж' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1879,7 +1879,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @468 'з' (7 pixels wide)
+		// @1608 'з' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1893,7 +1893,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @480 'и' (7 pixels wide)
+		// @1620 'и' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1907,7 +1907,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @492 'й' (7 pixels wide)
+		// @1632 'й' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x30, //   ##
@@ -1921,7 +1921,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @504 'к' (7 pixels wide)
+		// @1644 'к' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1935,7 +1935,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @516 'л' (7 pixels wide)
+		// @1656 'л' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1949,7 +1949,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @528 'м' (7 pixels wide)
+		// @1668 'м' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1963,7 +1963,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @540 'н' (7 pixels wide)
+		// @1680 'н' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1977,7 +1977,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @552 'о' (7 pixels wide)
+		// @1692 'о' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -1991,7 +1991,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @564 'п' (7 pixels wide)
+		// @1704 'п' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2005,7 +2005,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @576 'р' (7 pixels wide)
+		// @1716 'р' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2019,7 +2019,7 @@ static const uint8_t Font12_Table[] =
 		0xE0, // ###
 		0x00, //
 
-		// @588 'с' (7 pixels wide)
+		// @1728 'с' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2033,7 +2033,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @600 'т' (7 pixels wide)
+		// @1740 'т' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2047,7 +2047,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @612 'у' (7 pixels wide)
+		// @1752 'у' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2061,7 +2061,7 @@ static const uint8_t Font12_Table[] =
 		0xC0, // ##
 		0x00, //
 
-		// @624 'ф' (7 pixels wide)
+		// @1764 'ф' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x10, //    #
@@ -2075,7 +2075,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @636 'х' (7 pixels wide)
+		// @1776 'х' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2089,7 +2089,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @648 'ц' (7 pixels wide)
+		// @1788 'ц' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2103,7 +2103,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @660 'ч' (7 pixels wide)
+		// @1800 'ч' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2117,35 +2117,35 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @672 'ш' (7 pixels wide)
+		// @1812 'ш' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
-		0x54, // # # #
-		0x54, // # # #
-		0x54, // # # #
-		0x54, // # # #
-		0x54, // # # #
-		0x7C, // #####
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x7C, //  #####
 		0x00, //
 		0x00, //
 		0x00, //
 
-		// @684 'щ' (7 pixels wide)
+		// @1824 'щ' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
-		0x54, // # # #
-		0x54, // # # #
-		0x54, // # # #
-		0x54, // # # #
-		0x54, // # # #
-		0x7E, // ######
-		0x02, //      #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x54, //  # # #
+		0x7E, //  ######
+		0x02, //       #
 		0x00, //
 		0x00, //
 
-		// @696 'ъ' (7 pixels wide)
+		// @1836 'ъ' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2159,7 +2159,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @708 'ы' (7 pixels wide)
+		// @1848 'ы' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2173,7 +2173,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @720 'ь' (7 pixels wide)
+		// @1860 'ь' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2187,7 +2187,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @732 'э' (7 pixels wide)
+		// @1872 'э' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2201,7 +2201,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @744 'ю' (7 pixels wide)
+		// @1884 'ю' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
@@ -2215,7 +2215,7 @@ static const uint8_t Font12_Table[] =
 		0x00, //
 		0x00, //
 
-		// @756 'я' (7 pixels wide)
+		// @1896 'я' (7 pixels wide)
 		0x00, //
 		0x00, //
 		0x00, //
