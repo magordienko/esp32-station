@@ -19,5 +19,6 @@
         "sdkconfig.h": "c",
         "freertos.h": "c",
         "esp_flash.h": "c"
-    }
+    },
+    "idf.pythonInstallPath": "/usr/bin/python3"
 }
